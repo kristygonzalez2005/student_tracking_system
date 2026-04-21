@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Coordinador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido {{ nombre }}</h1>
+        <h2>Panel {{ rol }}</h2>
+
+        <div class="grid">
+            <a class="card-link" href="{{ url_for('ver_estudiantes_web') }}">Ver estudiantes</a>
+            <a class="card-link" href="{{ url_for('ver_historial_web') }}">Ver historial</a>
+            <a class="card-link" href="{{ url_for('ver_notificaciones_web') }}">Ver notificaciones</a>
+            <a class="card-link" href="{{ url_for('exportar_pdf_web') }}">Exportar historial a PDF</a>
+
+            {% if rol == "Administrador" %}
+            <a class="card-link" href="{{ url_for('ver_usuarios') }}">Gestionar usuarios</a>
+            {% endif %}
+
+            <a class="card-link danger" href="{{ url_for('logout') }}">Cerrar sesión</a>
+        </div>
+    </div>
+</body>
+</html>

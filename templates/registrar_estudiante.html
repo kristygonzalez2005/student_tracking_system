@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar estudiante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Registrar estudiante</h2>
+        <a class="btn" href="{{ url_for('panel_coordinador') }}">Volver</a>
+
+        {% if mensaje %}
+            <p>{{ mensaje }}</p>
+        {% endif %}
+
+        <form method="POST" class="form-card">
+            <input type="text" name="documento" placeholder="Documento" required>
+            <input type="text" name="nombre" placeholder="Nombre del estudiante" required>
+            <input type="text" name="grado" placeholder="Grado" required>
+
+            <input type="text" name="nombre_acudiente" placeholder="Nombre del acudiente" required>
+            <input type="text" name="telefono" placeholder="Teléfono" required>
+            <input type="text" name="parentesco" placeholder="Parentesco" required>
+            <input type="email" name="email" placeholder="Correo del acudiente" required>
+
+            <button type="submit" class="btn">Guardar</button>
+        </form>
+    </div>
+</body>
+</html>

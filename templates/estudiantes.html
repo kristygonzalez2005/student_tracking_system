@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estudiantes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Lista de estudiantes</h2>
+
+        <a class="btn" href="{{ url_for('panel_coordinador') }}">Volver</a>
+        <a class="btn" href="{{ url_for('registrar_estudiante_web') }}">➕ Registrar estudiante</a>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Documento</th>
+                    <th>Nombre</th>
+                    <th>Grado</th>
+                    <th>Estado</th>
+                    <th>Acudiente</th>
+                    <th>QR</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in estudiantes %}
+                <tr>
+                    <td>{{ e[0] }}</td>
+                    <td>{{ e[1] }}</td>
+                    <td>{{ e[2] }}</td>
+                    <td>{{ e[3] }}</td>
+                    <td>{{ e[4] }}</td>
+                    <td>{{ e[5] or 'Sin acudiente' }}</td>
+
+                    <td>
+                        <a href="{{ url_for('ver_qr_estudiante', documento=e[1]) }}" target="_blank">
+                            <button type="button" class="btn-ver">Ver QR</button>
+                        </a>
+                    </td>
+
+                    <td>
+                        <a href="{{ url_for('editar_estudiante', id_estudiante=e[0]) }}">
+                            <button type="button" class="btn-editar">✏️ Actualizar</button>
+                        </a>
+
+                        <form action="{{ url_for('eliminar_estudiante_web', id_estudiante=e[0]) }}"
+                              method="POST"
+                              style="display:inline;">
+                            <button class="btn-eliminar" type="submit"
+                                onclick="return confirm('¿Seguro que deseas eliminar este estudiante definitivamente?')">
+                                🗑️ Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

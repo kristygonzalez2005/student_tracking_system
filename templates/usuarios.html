@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuarios del sistema</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de usuarios</h1>
+        <h2>Bienvenido {{ nombre }}</h2>
+
+        <div class="grid" style="margin-bottom: 25px;">
+            <a class="card-link" href="{{ url_for('panel_coordinador') }}">Volver al panel</a>
+            <a class="card-link" href="{{ url_for('registrar_usuario_web') }}">Registrar usuario</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u["id_usuario"] }}</td>
+                    <td>{{ u["username"] }}</td>
+                    <td>{{ u["nombre"] }}</td>
+                    <td>{{ u["rol"] }}</td>
+                    <td>{{ u["estado"] }}</td>
+                    <td>
+                        {% if u["estado"] == "activo" %}
+                        <form action="{{ url_for('desactivar_usuario', id_usuario=u['id_usuario']) }}"
+                              method="POST"
+                              style="display:inline;">
+                            <button class="btn-eliminar" type="submit"
+                                onclick="return confirm('¿Seguro que deseas desactivar este usuario?')">
+                                Desactivar
+                            </button>
+                        </form>
+                        {% else %}
+                        <span>Inactivo</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

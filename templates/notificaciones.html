@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Notificaciones</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Notificaciones</h2>
+        <a class="btn" href="{{ url_for('panel_coordinador') }}">Volver</a>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Estudiante</th>
+                    <th>Acudiente</th>
+                    <th>Tipo</th>
+                    <th>Mensaje</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for n in notificaciones %}
+                <tr>
+                    <td>{{ n.estudiante }}</td>
+                    <td>{{ n.acudiente }}</td>
+                    <td>{{ n.tipo }}</td>
+                    <td>{{ n.mensaje }}</td>
+                    <td>{{ n.estado }}</td>
+                    <td>{{ n.enviado_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

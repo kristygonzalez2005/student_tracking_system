@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Portero</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>👮 Bienvenido {{ nombre }}</h1>
+    <h2>Control de Acceso</h2>
+
+    <!-- BOTONES -->
+    <div class="grid">
+        <a class="card-link" href="{{ url_for('escanear_qr_web') }}">
+            📷 Escanear Código QR
+        </a>
+
+        <a class="card-link danger" href="{{ url_for('logout') }}">
+            🚪 Cerrar sesión
+        </a>
+    </div>
+
+    <!-- RESULTADO -->
+    {% if resultado %}
+    <div class="card resultado">
+        <h3>Resultado del registro</h3>
+        <p>{{ resultado }}</p>
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
