@@ -1,6 +1,5 @@
 __pycache__/
 *.pyc
-*.db
 *.pdf
 .vscode/
 qr_codes/
