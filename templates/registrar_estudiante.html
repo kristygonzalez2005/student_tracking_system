@@ -5,27 +5,65 @@
     <title>Registrar estudiante</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="container">
-        <h2>Registrar estudiante</h2>
-        <a class="btn" href="{{ url_for('panel_coordinador') }}">Volver</a>
 
+<body class="dashboard-body">
+
+<div class="main-content">
+
+    <div class="form-container">
+
+        <!-- HEADER -->
+        <div class="form-header">
+            <div>
+                <h2>🎓 Registrar estudiante</h2>
+                <p class="subtitle">Completa la información del estudiante y acudiente</p>
+            </div>
+
+            <a class="btn-back" href="{{ url_for('panel_coordinador') }}">⬅ Volver</a>
+        </div>
+
+        <!-- MENSAJE -->
         {% if mensaje %}
-            <p>{{ mensaje }}</p>
+            <div class="form-message">
+                {{ mensaje }}
+            </div>
         {% endif %}
 
-        <form method="POST" class="form-card">
-            <input type="text" name="documento" placeholder="Documento" required>
-            <input type="text" name="nombre" placeholder="Nombre del estudiante" required>
-            <input type="text" name="grado" placeholder="Grado" required>
+        <form method="POST">
 
-            <input type="text" name="nombre_acudiente" placeholder="Nombre del acudiente" required>
-            <input type="text" name="telefono" placeholder="Teléfono" required>
-            <input type="text" name="parentesco" placeholder="Parentesco" required>
-            <input type="email" name="email" placeholder="Correo del acudiente" required>
+            <!-- DATOS ESTUDIANTE -->
+            <div class="form-section">
+                <h3>📘 Datos del estudiante</h3>
 
-            <button type="submit" class="btn">Guardar</button>
+                <div class="form-grid">
+                    <input type="text" name="documento" placeholder="Documento" required>
+                    <input type="text" name="nombre" placeholder="Nombre del estudiante" required>
+                    <input type="text" name="grado" placeholder="Grado" required>
+                </div>
+            </div>
+
+            <!-- DATOS ACUDIENTE -->
+            <div class="form-section">
+                <h3>👨‍👩‍👧 Datos del acudiente</h3>
+
+                <div class="form-grid">
+                    <input type="text" name="nombre_acudiente" placeholder="Nombre del acudiente" required>
+                    <input type="text" name="telefono" placeholder="Teléfono" required>
+                    <input type="text" name="parentesco" placeholder="Parentesco" required>
+                    <input type="email" name="email" placeholder="Correo del acudiente" required>
+                </div>
+            </div>
+
+            <!-- BOTÓN -->
+            <div class="form-footer">
+                <button type="submit" class="btn-save">💾 Guardar</button>
+            </div>
+
         </form>
+
     </div>
+
+</div>
+
 </body>
 </html>

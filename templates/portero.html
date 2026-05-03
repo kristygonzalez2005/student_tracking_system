@@ -5,33 +5,81 @@
     <title>Panel Portero</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
 
-<div class="container">
+<body class="dashboard-body">
 
-    <h1>👮 Bienvenido {{ nombre }}</h1>
-    <h2>Control de Acceso</h2>
+<div class="dashboard-layout">
 
-    <!-- BOTONES -->
-    <div class="grid">
-        <a class="card-link" href="{{ url_for('escanear_qr_web') }}">
-            📷 Escanear Código QR
-        </a>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo-box">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo-img">
+        </div>
 
-        <a class="card-link danger" href="{{ url_for('logout') }}">
-            🚪 Cerrar sesión
-        </a>
-    </div>
+        <a href="{{ url_for('panel_portero') }}">🏠 Inicio</a>
+        <a href="{{ url_for('escanear_qr_web') }}">📷 Escanear QR</a>
 
-    <!-- RESULTADO -->
-    {% if resultado %}
-    <div class="card resultado">
-        <h3>Resultado del registro</h3>
-        <p>{{ resultado }}</p>
-    </div>
-    {% endif %}
+        <a href="{{ url_for('logout') }}" class="logout">🚪 Cerrar sesión</a>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <div class="dashboard-header">
+            <h1>👮 Bienvenido {{ nombre }}</h1>
+            <p>Control de acceso en tiempo real</p>
+        </div>
+
+        <!-- 🔥 ESTADO DEL SISTEMA -->
+        <div class="status-card">
+            <h3>🟢 Sistema Activo</h3>
+            <p>📍 Portería Principal</p>
+            <p id="hora"></p>
+        </div>
+
+        <!-- 🔥 BOTÓN GRANDE -->
+        <div class="scan-container">
+            <a href="{{ url_for('escanear_qr_web') }}" class="scan-btn">
+                📷 ESCANEAR QR
+            </a>
+        </div>
+
+        <!-- 🔥 RESULTADO -->
+        {% if resultado %}
+        <div class="resultado-box">
+            <h3>Resultado del registro</h3>
+            <p>{{ resultado }}</p>
+        </div>
+        {% endif %}
+
+        <!-- 🔥 CONTADORES -->
+        <div class="mini-cards">
+            <div class="mini-card">
+                <h4>👨‍🎓 Entradas hoy</h4>
+                <p>{{ entradas_hoy or 0 }}</p>
+            </div>
+
+            <div class="mini-card">
+                <h4>🚪 Salidas hoy</h4>
+                <p>{{ salidas_hoy or 0 }}</p>
+            </div>
+        </div>
+
+    </main>
 
 </div>
+
+<!-- 🔥 SCRIPT HORA EN VIVO -->
+<script>
+function actualizarHora() {
+    const ahora = new Date();
+    document.getElementById("hora").innerText =
+        "🕒 " + ahora.toLocaleTimeString();
+}
+setInterval(actualizarHora, 1000);
+actualizarHora();
+</script>
 
 </body>
 </html>

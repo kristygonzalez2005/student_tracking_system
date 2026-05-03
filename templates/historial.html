@@ -5,31 +5,99 @@
     <title>Historial</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="container">
-        <h2>Historial de asistencias</h2>
-        <a class="btn" href="{{ url_for('panel_coordinador') }}">Volver</a>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Estudiante</th>
-                    <th>Grado</th>
-                    <th>Evento</th>
-                    <th>Fecha y hora</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for h in historial %}
-                <tr>
-                    <td>{{ h.nombre }}</td>
-                    <td>{{ h.grado }}</td>
-                    <td>{{ h.tipo }}</td>
-                    <td>{{ h.timestamp }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<body class="dashboard-body">
+
+<div class="main-content">
+
+    <div class="table-container">
+
+        <!-- HEADER -->
+        <div class="table-header">
+            <h2>📊 Historial de asistencias</h2>
+
+            <div class="table-actions">
+                <a class="btn-back" href="{{ url_for('panel_coordinador') }}">⬅ Volver</a>
+            </div>
+        </div>
+
+        <!-- 🔥 CONTADORES -->
+        <div class="dashboard-summary">
+            <div class="summary-card">
+                <h3>{{ entradas_hoy }}</h3>
+                <p>Entradas hoy</p>
+            </div>
+
+            <div class="summary-card">
+                <h3>{{ salidas_hoy }}</h3>
+                <p>Salidas hoy</p>
+            </div>
+        </div>
+
+        <!-- 🔎 FILTROS -->
+        <form method="GET" class="filtros">
+            <input type="text" name="estudiante" placeholder="Buscar estudiante">
+            <input type="date" name="fecha">
+            <button class="btn">Filtrar</button>
+        </form>
+
+        <!-- 🔍 BUSCADOR EN TIEMPO REAL -->
+        <input type="text" id="buscador" placeholder="🔍 Buscar en la tabla..." class="search-box">
+
+        <!-- TABLA -->
+        <div class="table-wrapper">
+            <table class="styled-table" id="tablaHistorial">
+
+                <thead>
+                    <tr>
+                        <th>Estudiante</th>
+                        <th>Grado</th>
+                        <th>Evento</th>
+                        <th>Fecha y hora</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for h in historial %}
+                    <tr>
+
+                        <td class="nombre">{{ h.nombre }}</td>
+
+                        <td>{{ h.grado }}</td>
+
+                        <td>
+                            {% if h.tipo == 'entrada' %}
+                                <span class="badge entrada">🟢 Entrada</span>
+                            {% else %}
+                                <span class="badge salida">🔴 Salida</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="fecha">{{ h.timestamp }}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
     </div>
+
+</div>
+
+<!-- 🔥 BUSCADOR EN TIEMPO REAL -->
+<script>
+document.getElementById("buscador").addEventListener("keyup", function() {
+    let filtro = this.value.toLowerCase();
+    let filas = document.querySelectorAll("#tablaHistorial tbody tr");
+
+    filas.forEach(fila => {
+        let texto = fila.innerText.toLowerCase();
+        fila.style.display = texto.includes(filtro) ? "" : "none";
+    });
+});
+</script>
+
 </body>
 </html>

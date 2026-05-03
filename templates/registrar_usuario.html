@@ -5,42 +5,69 @@
     <title>Registrar usuario</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="container">
-        <h1>Registrar usuario</h1>
-        <h2>Bienvenido {{ nombre }}</h2>
 
-        <div style="margin-bottom: 20px;">
-            <a class="btn" href="{{ url_for('ver_usuarios') }}">⬅ Volver a usuarios</a>
+<body class="dashboard-body">
+
+<div class="main-content">
+
+    <div class="form-container">
+
+        <!-- HEADER -->
+        <div class="form-header">
+            <div>
+                <h2>👤 Registrar usuario</h2>
+                <p class="subtitle">Panel administrador</p>
+            </div>
+
+            <a class="btn-back" href="{{ url_for('ver_usuarios') }}">⬅ Volver</a>
         </div>
 
+        <!-- MENSAJE -->
         {% if mensaje %}
-        <div class="resultado-box">
+        <div class="alert success">
             {{ mensaje }}
         </div>
         {% endif %}
 
-        <form method="POST">
-            <label for="nombre">Nombre completo:</label>
-            <input type="text" id="nombre" name="nombre" required>
+        <!-- FORM -->
+        <form method="POST" class="form-grid">
 
-            <label for="username">Usuario:</label>
-            <input type="text" id="username" name="username" required>
+            <div class="input-group">
+                <label>Nombre completo</label>
+                <input type="text" name="nombre" required>
+            </div>
 
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required>
+            <div class="input-group">
+                <label>Usuario</label>
+                <input type="text" name="username" required>
+            </div>
 
-            <label for="id_rol">Rol:</label>
-            <select id="id_rol" name="id_rol" required>
-                <option value="">Seleccione un rol</option>
-                {% for r in roles %}
-                <option value="{{ r['id_rol'] }}">{{ r['nombre'] }}</option>
-                {% endfor %}
-            </select>
+            <div class="input-group">
+                <label>Contraseña</label>
+                <input type="password" name="password" required>
+            </div>
 
-            <br><br>
-            <button type="submit" class="btn">Guardar usuario</button>
+            <div class="input-group">
+                <label>Rol</label>
+                <select name="id_rol" required>
+                    <option value="">Seleccione un rol</option>
+                    {% for r in roles %}
+                    <option value="{{ r['id_rol'] }}">{{ r['nombre'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    💾 Guardar usuario
+                </button>
+            </div>
+
         </form>
+
     </div>
+
+</div>
+
 </body>
 </html>

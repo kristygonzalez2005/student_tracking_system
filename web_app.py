@@ -11,9 +11,16 @@ app.secret_key = "clave_secreta_proyecto"
 
 
 # -------------------------
+# INDEX (PRIMERA PANTALLA)
+# -------------------------
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+# -------------------------
 # LOGIN
 # -------------------------
-@app.route("/", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form["username"].strip()
@@ -39,33 +46,60 @@ def login():
 
             if usuario["rol_nombre"] == "Portero":
                 return redirect(url_for("panel_portero"))
-            elif usuario["rol_nombre"] in ["Coordinador", "Administrador", "Rectora"]:
+            else:
                 return redirect(url_for("panel_coordinador"))
 
         return render_template("login.html", error="Usuario o contraseña incorrectos")
 
     return render_template("login.html")
 
-
 # -------------------------
 # PORTERO
-# -------------------------
+# -----------------------
 @app.route("/portero")
 def panel_portero():
     if "rol" not in session or session["rol"] != "Portero":
         return redirect(url_for("login"))
 
-    return render_template("portero.html", nombre=session["nombre"], resultado=None)
+    conn = get_connection()
+    cursor = conn.cursor()
 
+    # 🔥 CONTAR ENTRADAS HOY
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM evento_asistencia
+        WHERE tipo = 'entrada'
+        AND DATE(timestamp) = DATE('now')
+    """)
+    entradas_hoy = cursor.fetchone()["total"]
 
+    # 🔥 CONTAR SALIDAS HOY
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM evento_asistencia
+        WHERE tipo = 'salida'
+        AND DATE(timestamp) = DATE('now')
+    """)
+    salidas_hoy = cursor.fetchone()["total"]
+
+    conn.close()
+
+    return render_template(
+        "portero.html",
+        nombre=session["nombre"],
+        resultado=None,
+        entradas_hoy=entradas_hoy,
+        salidas_hoy=salidas_hoy
+    )
+    # -------------------------
+# ESCANEAR QR
+# -------------------------
 @app.route("/portero/escanear")
 def escanear_qr_web():
     if "rol" not in session or session["rol"] != "Portero":
         return redirect(url_for("login"))
 
-    usuario = {
-        "nombre": session["nombre"]
-    }
+    usuario = {"nombre": session["nombre"]}
 
     qr = escanear_qr()
 
@@ -74,9 +108,35 @@ def escanear_qr_web():
     else:
         resultado = "❌ No se detectó ningún QR"
 
-    return render_template("portero.html", nombre=session["nombre"], resultado=resultado)
+    # 🔥 ACTUALIZAR CONTADORES
+    conn = get_connection()
+    cursor = conn.cursor()
 
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM evento_asistencia
+        WHERE tipo = 'entrada'
+        AND DATE(timestamp) = DATE('now')
+    """)
+    entradas_hoy = cursor.fetchone()["total"]
 
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM evento_asistencia
+        WHERE tipo = 'salida'
+        AND DATE(timestamp) = DATE('now')
+    """)
+    salidas_hoy = cursor.fetchone()["total"]
+
+    conn.close()
+
+    return render_template(
+        "portero.html",
+        nombre=session["nombre"],
+        resultado=resultado,
+        entradas_hoy=entradas_hoy,
+        salidas_hoy=salidas_hoy
+    )
 # -------------------------
 # PANEL COORDINADOR / ADMIN / RECTORA
 # -------------------------
@@ -85,7 +145,45 @@ def panel_coordinador():
     if "rol" not in session or session["rol"] not in ["Coordinador", "Administrador", "Rectora"]:
         return redirect(url_for("login"))
 
-    return render_template("coordinador.html", nombre=session["nombre"], rol=session["rol"])
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # Total estudiantes
+    cursor.execute("SELECT COUNT(*) AS total FROM estudiante")
+    total_estudiantes = cursor.fetchone()["total"]
+
+    # Total entradas
+    cursor.execute("SELECT COUNT(*) AS total FROM evento_asistencia WHERE tipo = 'entrada'")
+    total_entradas = cursor.fetchone()["total"]
+
+    # Total salidas
+    cursor.execute("SELECT COUNT(*) AS total FROM evento_asistencia WHERE tipo = 'salida'")
+    total_salidas = cursor.fetchone()["total"]
+
+    # Total eventos
+    total_eventos = total_entradas + total_salidas
+
+    # Porcentajes
+    if total_eventos > 0:
+        porcentaje_entradas = round((total_entradas / total_eventos) * 100, 1)
+        porcentaje_salidas = round((total_salidas / total_eventos) * 100, 1)
+    else:
+        porcentaje_entradas = 0
+        porcentaje_salidas = 0
+
+    conn.close()
+
+    return render_template(
+        "coordinador.html",
+        nombre=session["nombre"],
+        rol=session["rol"],
+        total_estudiantes=total_estudiantes,
+        total_entradas=total_entradas,
+        total_salidas=total_salidas,
+        total_eventos=total_eventos,
+        porcentaje_entradas=porcentaje_entradas,
+        porcentaje_salidas=porcentaje_salidas
+    )
 
 
 # -------------------------
@@ -415,26 +513,55 @@ def ver_historial_web():
     if "rol" not in session or session["rol"] not in ["Coordinador", "Administrador", "Rectora"]:
         return redirect(url_for("login"))
 
+    filtro_estudiante = request.args.get("estudiante", "")
+    filtro_fecha = request.args.get("fecha", "")
+
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    query = """
         SELECT e.nombre, e.grado, ev.tipo, ev.timestamp
         FROM evento_asistencia ev
         JOIN estudiante e ON ev.id_estudiante = e.id_estudiante
-        ORDER BY ev.timestamp DESC
-    """)
+        WHERE 1=1
+    """
+
+    params = []
+
+    if filtro_estudiante:
+        query += " AND e.nombre LIKE ?"
+        params.append(f"%{filtro_estudiante}%")
+
+    if filtro_fecha:
+        query += " AND DATE(ev.timestamp) = ?"
+        params.append(filtro_fecha)
+
+    query += " ORDER BY ev.timestamp DESC"
+
+    cursor.execute(query, params)
     historial = cursor.fetchall()
+
+    # 🔥 CONTADORES HOY
+    cursor.execute("""
+        SELECT COUNT(*) FROM evento_asistencia
+        WHERE tipo = 'entrada' AND DATE(timestamp) = DATE('now')
+    """)
+    entradas_hoy = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*) FROM evento_asistencia
+        WHERE tipo = 'salida' AND DATE(timestamp) = DATE('now')
+    """)
+    salidas_hoy = cursor.fetchone()[0]
 
     conn.close()
 
     return render_template(
         "historial.html",
         historial=historial,
-        nombre=session["nombre"]
+        entradas_hoy=entradas_hoy,
+        salidas_hoy=salidas_hoy
     )
-
-
 # -------------------------
 # NOTIFICACIONES
 # -------------------------

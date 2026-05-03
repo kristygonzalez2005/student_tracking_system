@@ -5,60 +5,105 @@
     <title>Estudiantes</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="container">
-        <h2>Lista de estudiantes</h2>
 
-        <a class="btn" href="{{ url_for('panel_coordinador') }}">Volver</a>
-        <a class="btn" href="{{ url_for('registrar_estudiante_web') }}">➕ Registrar estudiante</a>
+<body class="dashboard-body">
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Documento</th>
-                    <th>Nombre</th>
-                    <th>Grado</th>
-                    <th>Estado</th>
-                    <th>Acudiente</th>
-                    <th>QR</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for e in estudiantes %}
-                <tr>
-                    <td>{{ e[0] }}</td>
-                    <td>{{ e[1] }}</td>
-                    <td>{{ e[2] }}</td>
-                    <td>{{ e[3] }}</td>
-                    <td>{{ e[4] }}</td>
-                    <td>{{ e[5] or 'Sin acudiente' }}</td>
+<div class="main-content">
 
-                    <td>
-                        <a href="{{ url_for('ver_qr_estudiante', documento=e[1]) }}" target="_blank">
-                            <button type="button" class="btn-ver">Ver QR</button>
-                        </a>
-                    </td>
+    <div class="table-container">
 
-                    <td>
-                        <a href="{{ url_for('editar_estudiante', id_estudiante=e[0]) }}">
-                            <button type="button" class="btn-editar">✏️ Actualizar</button>
-                        </a>
+        <!-- HEADER -->
+        <div class="table-header">
+            <div>
+                <h2>📋 Lista de estudiantes</h2>
+                <p class="subtitle">Gestión y control de estudiantes registrados</p>
+            </div>
 
-                        <form action="{{ url_for('eliminar_estudiante_web', id_estudiante=e[0]) }}"
-                              method="POST"
-                              style="display:inline;">
-                            <button class="btn-eliminar" type="submit"
-                                onclick="return confirm('¿Seguro que deseas eliminar este estudiante definitivamente?')">
-                                🗑️ Eliminar
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <div class="table-actions">
+                <a class="btn-back" href="{{ url_for('panel_coordinador') }}">⬅ Volver</a>
+                <a class="btn-add" href="{{ url_for('registrar_estudiante_web') }}">➕ Registrar</a>
+            </div>
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="table-search">
+            <input type="text" id="buscar" placeholder="🔍 Buscar estudiante...">
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-wrapper">
+            <table class="styled-table" id="tablaEstudiantes">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Documento</th>
+                        <th>Nombre</th>
+                        <th>Grado</th>
+                        <th>Estado</th>
+                        <th>Acudiente</th>
+                        <th>QR</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for e in estudiantes %}
+                    <tr>
+                        <td>{{ e[0] }}</td>
+                        <td>{{ e[1] }}</td>
+                        <td class="nombre">{{ e[2] }}</td>
+                        <td>{{ e[3] }}</td>
+
+                        <td>
+                            <span class="estado activo">{{ e[4] }}</span>
+                        </td>
+
+                        <td>{{ e[5] or 'Sin acudiente' }}</td>
+
+                        <td>
+                            <a href="{{ url_for('ver_qr_estudiante', documento=e[1]) }}" target="_blank" class="btn-qr">
+                                Ver QR
+                            </a>
+                        </td>
+
+                        <td class="acciones">
+
+                            <a href="{{ url_for('editar_estudiante', id_estudiante=e[0]) }}">
+                                <button class="btn-edit">✏️</button>
+                            </a>
+
+                            <form action="{{ url_for('eliminar_estudiante_web', id_estudiante=e[0]) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('¿Seguro que deseas eliminar este estudiante?')">
+
+                                <button class="btn-delete">🗑️</button>
+                            </form>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
     </div>
+
+</div>
+
+<!-- BUSCADOR JS -->
+<script>
+document.getElementById("buscar").addEventListener("keyup", function() {
+    let filtro = this.value.toLowerCase();
+    let filas = document.querySelectorAll("#tablaEstudiantes tbody tr");
+
+    filas.forEach(fila => {
+        let texto = fila.textContent.toLowerCase();
+        fila.style.display = texto.includes(filtro) ? "" : "none";
+    });
+});
+</script>
+
 </body>
 </html>

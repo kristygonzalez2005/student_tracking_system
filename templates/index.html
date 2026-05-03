@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Escolar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="landing-page">
+
+<!-- NAVBAR -->
+<header class="navbar-pro">
+    <div class="nav-left">
+
+        <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo-nav">
+
+        <div class="brand-text">
+            <strong>Sistema Escolar</strong>
+            <small>Gestión académica eficiente</small>
+        </div>
+
+    </div>
+    <nav class="nav-links">
+        <a href="#">Inicio</a>
+        <a href="#">Características</a>
+        <a href="#">Beneficios</a>
+        <a href="#">Módulos</a>
+    </nav>
+
+    <div class="nav-actions">
+        <a href="{{ url_for('login') }}" class="btn-outline">Iniciar sesión</a>
+        <a href="{{ url_for('login') }}" class="btn-main">Registrarse</a>
+    </div>
+</header>
+
+
+<!-- HERO -->
+<section class="hero-pro">
+
+    <!-- TEXTO -->
+    <div class="hero-left">
+
+        <span class="badge">Todo lo que tu institución necesita</span>
+
+        <h1>
+            Gestiona tu institución de forma 
+            <span>simple y eficiente</span>
+        </h1>
+
+        <p>
+            Plataforma integral para la gestión académica, asistencia,
+            estudiantes y notificaciones en tiempo real.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="{{ url_for('login') }}" class="btn-main big">
+                Comienza ahora →
+            </a>
+
+            <a href="#" class="btn-outline big">
+                Ver demostración
+            </a>
+        </div>
+
+    </div>
+
+    <!-- IMAGEN -->
+    <div class="hero-right">
+        <img src="{{ url_for('static', filename='img/dashboard.png') }}" alt="dashboard">
+    </div>
+
+</section>
+
+
+<!-- BENEFICIOS -->
+<section class="features">
+
+    <div class="feature-card">
+        <h3>📊 Gestión Académica</h3>
+        <p>Administra estudiantes, cursos y asistencia fácilmente.</p>
+    </div>
+
+    <div class="feature-card">
+        <h3>📢 Comunicación</h3>
+        <p>Notifica en tiempo real a acudientes y docentes.</p>
+    </div>
+
+    <div class="feature-card">
+        <h3>📈 Reportes</h3>
+        <p>Analiza datos para tomar mejores decisiones.</p>
+    </div>
+
+    <div class="feature-card">
+        <h3>🔐 Seguridad</h3>
+        <p>Protección de datos con altos estándares.</p>
+    </div>
+
+</section>
+
+</body>
+</html>

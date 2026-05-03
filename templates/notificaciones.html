@@ -5,12 +5,29 @@
     <title>Notificaciones</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="container">
-        <h2>Notificaciones</h2>
-        <a class="btn" href="{{ url_for('panel_coordinador') }}">Volver</a>
 
-        <table>
+<body class="dashboard-body">
+
+<div class="main-content">
+
+<div class="table-container">
+
+    <!-- HEADER -->
+    <div class="table-header">
+        <h2>🔔 Notificaciones</h2>
+
+        <div class="table-actions">
+            <a class="btn-back" href="{{ url_for('panel_coordinador') }}">⬅ Volver</a>
+        </div>
+    </div>
+
+    <!-- 🔍 BUSCADOR -->
+    <input type="text" id="buscadorNoti" placeholder="🔍 Buscar notificación..." class="search-box">
+
+    <!-- TABLA -->
+    <div class="table-wrapper">
+        <table class="styled-table" id="tablaNotificaciones">
+
             <thead>
                 <tr>
                     <th>Estudiante</th>
@@ -21,19 +38,61 @@
                     <th>Fecha</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for n in notificaciones %}
                 <tr>
-                    <td>{{ n.estudiante }}</td>
+
+                    <td class="nombre">{{ n.estudiante }}</td>
+
                     <td>{{ n.acudiente }}</td>
-                    <td>{{ n.tipo }}</td>
-                    <td>{{ n.mensaje }}</td>
-                    <td>{{ n.estado }}</td>
-                    <td>{{ n.enviado_at }}</td>
+
+                    <!-- 🔥 TIPO -->
+                    <td>
+                        {% if n.tipo == 'entrada' %}
+                            <span class="badge entrada">🟢 Entrada</span>
+                        {% else %}
+                            <span class="badge salida">🔴 Salida</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- MENSAJE -->
+                    <td class="mensaje">{{ n.mensaje }}</td>
+
+                    <!-- 🔥 ESTADO -->
+                    <td>
+                        {% if n.estado == 'enviado' %}
+                            <span class="badge ok">✅ Enviado</span>
+                        {% else %}
+                            <span class="badge error">❌ Fallido</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="fecha">{{ n.enviado_at }}</td>
+
                 </tr>
                 {% endfor %}
             </tbody>
+
         </table>
     </div>
+
+</div>
+
+</div>
+
+<!-- 🔍 BUSCADOR EN TIEMPO REAL -->
+<script>
+document.getElementById("buscadorNoti").addEventListener("keyup", function() {
+    let filtro = this.value.toLowerCase();
+    let filas = document.querySelectorAll("#tablaNotificaciones tbody tr");
+
+    filas.forEach(fila => {
+        let texto = fila.innerText.toLowerCase();
+        fila.style.display = texto.includes(filtro) ? "" : "none";
+    });
+});
+</script>
+
 </body>
 </html>

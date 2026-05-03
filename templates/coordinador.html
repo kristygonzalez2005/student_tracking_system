@@ -5,23 +5,161 @@
     <title>Panel Coordinador</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="container">
-        <h1>Bienvenido {{ nombre }}</h1>
-        <h2>Panel {{ rol }}</h2>
 
-        <div class="grid">
-            <a class="card-link" href="{{ url_for('ver_estudiantes_web') }}">Ver estudiantes</a>
-            <a class="card-link" href="{{ url_for('ver_historial_web') }}">Ver historial</a>
-            <a class="card-link" href="{{ url_for('ver_notificaciones_web') }}">Ver notificaciones</a>
-            <a class="card-link" href="{{ url_for('exportar_pdf_web') }}">Exportar historial a PDF</a>
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo-box">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo-img">
+        </div>
+
+        <a href="{{ url_for('panel_coordinador') }}">🏠 Inicio</a>
+        <a href="{{ url_for('ver_estudiantes_web') }}">👨‍🎓 Estudiantes</a>
+        <a href="{{ url_for('ver_historial_web') }}">📊 Historial</a>
+        <a href="{{ url_for('ver_notificaciones_web') }}">🔔 Notificaciones</a>
+        <a href="{{ url_for('exportar_pdf_web') }}">📄 Reportes</a>
+
+        {% if rol == "Administrador" %}
+        <a href="{{ url_for('ver_usuarios') }}">⚙️ Usuarios</a>
+        {% endif %}
+
+        <a class="logout" href="{{ url_for('logout') }}">🚪 Cerrar sesión</a>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <div class="dashboard-header">
+            <h1>Bienvenido {{ nombre }}</h1>
+            <p>Panel {{ rol }}</p>
+        </div>
+
+        <!-- 🔝 ACCESOS -->
+        <div class="dashboard-cards">
+
+            <a class="dashboard-card" href="{{ url_for('ver_estudiantes_web') }}">
+                <h3>👨‍🎓 Estudiantes</h3>
+                <p>Gestionar información estudiantil</p>
+            </a>
+
+            <a class="dashboard-card" href="{{ url_for('ver_historial_web') }}">
+                <h3>📊 Historial</h3>
+                <p>Consultar asistencias</p>
+            </a>
+
+            <a class="dashboard-card" href="{{ url_for('ver_notificaciones_web') }}">
+                <h3>🔔 Notificaciones</h3>
+                <p>Ver alertas del sistema</p>
+            </a>
+
+            <a class="dashboard-card" href="{{ url_for('exportar_pdf_web') }}">
+                <h3>📄 Reportes</h3>
+                <p>Exportar historial en PDF</p>
+            </a>
 
             {% if rol == "Administrador" %}
-            <a class="card-link" href="{{ url_for('ver_usuarios') }}">Gestionar usuarios</a>
+            <a class="dashboard-card" href="{{ url_for('ver_usuarios') }}">
+                <h3>⚙️ Usuarios</h3>
+                <p>Administrar accesos</p>
+            </a>
             {% endif %}
 
-            <a class="card-link danger" href="{{ url_for('logout') }}">Cerrar sesión</a>
+        </div>
+
+        <!-- 📊 TARJETAS -->
+        <div class="dashboard-summary">
+
+            <div class="summary-card">
+                <h3>{{ total_estudiantes }}</h3>
+                <p>Estudiantes</p>
+            </div>
+
+            <div class="summary-card">
+                <h3>{{ total_entradas }}</h3>
+                <p>Entradas</p>
+            </div>
+
+            <div class="summary-card">
+                <h3>{{ total_salidas }}</h3>
+                <p>Salidas</p>
+            </div>
+
+            <div class="summary-card">
+                <h3>{{ total_eventos }}</h3>
+                <p>Total registros</p>
+            </div>
+
+        </div>
+
+        <!-- 📉 GRÁFICO -->
+<div class="chart-card">
+    <h3>Resumen de asistencia</h3>
+
+    <canvas id="graficoAsistencia"></canvas>
+
+    <!-- 🔥 PORCENTAJES BONITOS ABAJO -->
+    <div class="chart-info">
+        <div class="info-item entradas">
+            <span class="color-box"></span>
+            Entradas: <strong>{{ porcentaje_entradas }}%</strong>
+        </div>
+
+        <div class="info-item salidas">
+            <span class="color-box"></span>
+            Salidas: <strong>{{ porcentaje_salidas }}%</strong>
         </div>
     </div>
+</div>
+
+    </main>
+
+<!-- CHART -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const ctx = document.getElementById('graficoAsistencia');
+
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Entradas', 'Salidas'],
+                datasets: [{
+                    data: {{ [total_entradas or 0, total_salidas or 0] | tojson }},
+                    backgroundColor: ['#2d6a4f', '#f4a261'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '70%',
+                animation: {
+                    animateRotate: true,
+                    duration: 1200
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+});
+</script>
+
 </body>
 </html>

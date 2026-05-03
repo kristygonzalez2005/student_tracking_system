@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <!-- LOGO -->
+        <div class="logo-box">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo">
+            <div>
+                <h2>Sistema Escolar</h2>
+                <p>Gestión académica</p>
+            </div>
+        </div>
+
+        <!-- MENÚ -->
+        <a href="#">🏠 Inicio</a>
+        <a href="/coordinador/estudiantes">👨‍🎓 Estudiantes</a>
+        <a href="/coordinador/historial">📊 Historial</a>
+        <a href="/coordinador/notificaciones">🔔 Notificaciones</a>
+
+        {% if rol == "Administrador" %}
+            <a href="/coordinador/usuarios">⚙️ Usuarios</a>
+        {% endif %}
+
+        <a href="/logout" class="logout">🚪 Cerrar sesión</a>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="main-content">
+
+        <header class="dashboard-header">
+            <h2>Bienvenido {{ nombre }}</h2>
+            <span class="rol">{{ rol }}</span>
+        </header>
+
+        <!-- TARJETAS -->
+        <div class="dashboard-cards">
+
+            <a href="/coordinador/estudiantes" class="dashboard-card">
+                <h3>👨‍🎓 Estudiantes</h3>
+                <p>Gestionar estudiantes</p>
+            </a>
+
+            <a href="/coordinador/historial" class="dashboard-card">
+                <h3>📊 Historial</h3>
+                <p>Ver asistencias</p>
+            </a>
+
+            <a href="/coordinador/notificaciones" class="dashboard-card">
+                <h3>🔔 Notificaciones</h3>
+                <p>Ver alertas</p>
+            </a>
+
+            <a href="/coordinador/exportar-pdf" class="dashboard-card">
+                <h3>📄 Reportes</h3>
+                <p>Exportar PDF</p>
+            </a>
+
+            {% if rol == "Administrador" %}
+            <a href="/coordinador/usuarios" class="dashboard-card">
+                <h3>⚙️ Usuarios</h3>
+                <p>Gestionar usuarios</p>
+            </a>
+            {% endif %}
+
+            {% if rol == "Portero" %}
+            <a href="/portero/escanear" class="dashboard-card qr-card">
+                <h3>📷 Escanear QR</h3>
+                <p>Registrar asistencia</p>
+            </a>
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
